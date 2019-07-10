@@ -24,10 +24,13 @@ From the DynamoDB service page click `Create Table`. The database configuraton o
 
 Once you have your table created you can begin adding items.  You can get very creative with the attributes of your users, but for this tutorial I recommend 5: 
 * `name` - String - the username provided by slack.  You can include the @ if you want, but I've chosen to parse that out. 
-* `full_name` - String - The full name of the user.  This one isn't completely necessary, but it helps make the responses readable. 
+* `fullname` - String - The full name of the user.  This one isn't completely necessary, but it helps make the responses readable. 
 * `house` - String - the house the user belongs to:  Gryffindor, Slytherin, Ravenclaw or Hufflepuff
 * `points` - Float/Decimal - the number of points the user has. Everyone will start with 0
 * `can_has` - Boolean -  a special flag so you can disable users without having to shut the whole app down. You can rename this to something more sensible, but we are building a Harry Potter app here so don't take it too seriously. 
+Optionals: 
+* `nickname` - Allows you to assign a nickname to users.  Turn `Calvin Broadus` into `Calvin "Snoop Dogg" Broadus`
+* `title` - Allows you to assign a title to a user.  Turn `Jeff Bezos` into `Jeff Bezos, the Richest human being` 
 
 You may be wondering where to set these attributes in DynamoDB.  The answer is nowhere.  DynamoDB is a NoSQL database meaning it's unstructured.  For the uninitiated that means you can have highly varied data all in the same table.  In our example you could have a row with 3 attributes and a row with 30 attributes so long as they both have valid Primary Keys.  The easiest way to set this up is to store the data of your members with the attributes you want filled out then upload the data to DynamoDB.   
 # Populating the Database
