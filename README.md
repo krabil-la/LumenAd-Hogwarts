@@ -34,7 +34,7 @@ Once you have your table created you can begin adding items.  You can get very c
 * `can_has` - Boolean -  a special flag so you can disable users without having to shut the whole app down. You can rename this to something more sensible, but we are building a Harry Potter app here so don't take it too seriously. 
 Optionals: 
 * `nickname` - Allows you to assign a nickname to users.  Turn `Calvin Broadus` into `Calvin "Snoop Dogg" Broadus`
-* `title` - Allows you to assign a title to a user.  Turn `Jeff Bezos` into `Jeff Bezos, the Richest human being` 
+* `title` - Allows you to assign a title to a user.  Turn `Daenerys Targaryen` into `Daenerys Targaryen, the First of Her Name, The Unburnt, Queen of the Andals, the Rhoynar and the First Men, Queen of Meereen, Khaleesi of the Great Grass Sea, Protector of the Realm, Lady Regent of the Seven Kingdoms, Breaker of Chains and Mother of Dragons` 
 
 You may be wondering where to set these attributes in DynamoDB.  The answer is nowhere.  DynamoDB is a NoSQL database meaning it's unstructured.  For the uninitiated that means you can have highly varied data all in the same table.  In our example you could have a row with 3 attributes and a row with 30 attributes so long as they both have valid Primary Keys.  The easiest way to set this up is to store the data of your members with the attributes you want filled out then upload the data to DynamoDB.   
 # Populating the Database
@@ -42,7 +42,28 @@ The one part of this whole process I haven't come with a good solution to is put
 
 You could have people fill out their own houses, but I had a hard time just getting everyone to come up with a house, let alone write it down.  There's also an option to put everyone in the database then create a command that lets them move themselves.  I didn't do this because I thought people would be switching all the time, but that may be a better solution for you.  Either way you'll need a default house for everyone who can't decide. I chose Hufflepuff as the default because of a quote from the books: <em>"Good Hufflepuff, she took the rest and taught them all she knew"</em>
 
-TODO: provide sample code for batch upload in Python
+Here's the original javascript I used to upload the data to DynamoDB from a csv.  May it help you in your travels.
+`const fs = require('fs')
+const parse = require('csv-parse/lib/sync')
+const AWS = require('aws-sdk')
+
+AWS.config.update({ region: 'us-east-2' });
+const docClient = new AWS.DynamoDB.DocumentClient()
+
+const contents = fs.readFileSync('./hp.csv', 'utf-8')
+// If you made an export of a DynamoDB table you need to remove (S) etc from header
+const data = parse(contents, {columns: true})
+
+data.forEach((item) => {
+        if(!item.maybeempty) delete item.maybeempty //need to remove empty items
+        //console.log(item)
+        item['points'] = 0;
+        item['can_has'] = true;
+        docClient.put({TableName: 'Hogwarts', Item: item}, (err, res) => {
+                if(err) console.log(err)
+        })
+})
+`
 
 # The Code - Lambda
 ![AWS Lambda](/images/aws_lambda_service.png)
