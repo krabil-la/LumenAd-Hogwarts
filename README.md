@@ -80,9 +80,12 @@ This part is pretty straightforward.  Navigate to AWS Lambda from the Services d
 ![AWS Lambda Create Function](/images/aws_lambda_create_function.png)
 
 The one catch here is to make sure you use the same region as your database to make connecting easier.  You can use the code I've provided with this repository and as long as the names of your attributes and tables match it should be plug and play.  You will need to add your Slack key as an environment variable in a later step.
+![AWS Lambda Create Function](/images/aws_lambda_code.png)
 
-Finally we need to attach an http endpoint to our new Lambda function.  Select `Add Trigger` in the Lambda Designer panel and select `API Gateway`.  API Gateway will create an endpoint for your function that you can call with a simple http request.  This is the magic that allows you to execute the command via Slack.  You can create a new API in this step or select an existing one if you happen to have an AWS API lying around.  The Deployment Stage doesn't really matter since we likely won't have many different versions of this function.  Under Security select `Open`.  Normally I would never recommend this as it allows any resource with access to the url to call your function.  However, this is the only way to make it work via a Slack command and we'll add our own security to it in a later step.
+Finally we need to attach an http endpoint to our new Lambda function.  Select `Add Trigger` in the Lambda Designer panel and select `API Gateway`.  
 ![AWS Lambda Create Trigger](/images/aws_lambda_create_trigger.png)
+
+API Gateway will create an endpoint for your function that you can call with a simple http request.  This is the magic that allows you to execute the command via Slack.  You can create a new API in this step or select an existing one if you happen to have an AWS API lying around.  The Deployment Stage doesn't really matter since we likely won't have many different versions of this function.  Under Security select `Open`.  Normally I would never recommend this as it allows any resource with access to the url to call your function.  However, this is the only way to make it work via a Slack command and we'll add our own security to it in a later step.
 ![AWS Lambda Trigger Config](/images/aws_lambda_trigger_config.png)
 
 # Slack Integration
