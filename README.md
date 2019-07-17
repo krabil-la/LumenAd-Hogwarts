@@ -9,7 +9,6 @@ This repo will show you how to set up your very own House Cup in Slack.  You too
 * An AWS (Amazon Web Services) Account - I recommend using a separate AWS account if you already have production resources in AWS
 * A Slack account and enough priviledges to create custom Slash commands - ask your IT specialist for elevated priviledges
 * Some familiarity with Python - Harry Potter wasn't afraid to confront a giant snake and you shouldn't be either
-* Courage 
 
 # The Database
 First You'll need to login to your AWS account or create an account: https://aws.amazon.com
@@ -22,8 +21,11 @@ If you don't have an account it should be noted that you have to provide a credi
 After you're logged in you're ready to create a DynamoDB table.  Navigate to Services from the main page and search for `DynamoDB` then select it from the dropdown. I chose DynamoDB to make development of new features easier and because I wanted to learn the technology for another project.  If you're more familiar with a different database you can easily switch it out here. I recommend staying within the AWS environment for this step as Lambda functions connect very easily to AWS databases. 
 ![AWS Services](/images/aws_search_services.png)
   
-From the DynamoDB service page click `Create Table`. The database configuraton options here are pretty varied, but I recommend using the slack username as your Primary Key accepting the default settings.  If you want to get fancy you can add a Sort Key and Secondary Indexes to improve query efficiency and speed.  However I only recommend doing this if you both know what you're doing and plan on having tons of users.  If you have <1000 users I wouldn't worry about it. 
+From the DynamoDB service page click `Create Table`. 
 ![AWS DynamoDB table](/images/aws_create_dynamodb_table.png)
+
+The database configuraton options here are pretty varied, but I recommend using the slack username as your Primary Key accepting the default settings.  If you want to get fancy you can add a Sort Key and Secondary Indexes to improve query efficiency and speed.  However I only recommend doing this if you both know what you're doing and plan on having tons of users.  If you have <1000 users I wouldn't worry about it. 
+
 ![AWS DynamoDB Settings](/images/aws_dynamnodb_table_config.png)
 
 Once you have your table created you can begin adding items.  You can get very creative with the attributes of your users, but for this tutorial I recommend 5: 
@@ -42,7 +44,7 @@ The one part of this whole process I haven't come with a good solution to is put
 
 You could have people fill out their own houses, but I had a hard time just getting everyone to come up with a house, let alone write it down.  There's also an option to put everyone in the database then create a command that lets them move themselves.  I didn't do this because I thought people would be switching all the time, but that may be a better solution for you.  Either way you'll need a default house for everyone who can't decide. I chose Hufflepuff as the default because of a quote from the books: <em>"Good Hufflepuff, she took the rest and taught them all she knew"</em>
 
-Here's the original javascript I used to upload the data to DynamoDB from a csv.  May it help you in your travels.
+Here's the original javascript I used to upload the data to DynamoDB from a csv.  Depending on how you collect and store you data you may be able to use this snippet unmodified or you may need something completely different.  This is more to give you an idea of how I did it.  May it help you in your travels.
 ```const fs = require('fs')
 const parse = require('csv-parse/lib/sync')
 const AWS = require('aws-sdk')
@@ -64,6 +66,12 @@ data.forEach((item) => {
         })
 })
 ```
+
+Alternatively you can enter each user manually through the UI.  Select `Create Item` on your table.
+![AWS DynamoDB Settings](/images/aws_dynamodb_create_item.png)
+
+Then you can enter your users' information via the `Tree` editor or the `JSON` editor.
+![AWS DynamoDB Settings](/images/aws_dynamodb_item.png)
 
 
 # The Code - Lambda
