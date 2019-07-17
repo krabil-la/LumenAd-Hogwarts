@@ -15,6 +15,9 @@ This repo will show you how to set up your very own House Cup in Slack.  You too
 First You'll need to login to your AWS account or create an account: https://aws.amazon.com
 AWS (Amazon Web Services) is Amazon's cloud computing suite.  It's pretty easy to get started and they handle a lot of the crummiest parts of software development (ie, the hardware part).  Even if you have no familiarity with AWS you can complete this tutorial.  
 
+![AWS Sign In](/images/aws_sign_in.png)
+Format: ![Alt Text](https://aws.amazon.com)
+
 If you don't have an account it should be noted that you have to provide a credit card to create an account.  Even though most of this will fall within the Free Tier usage you should be aware that you can accrue charges if something is misconfigured.  `LumenAd takes no responsibility for unexpected AWS bills.`  After the Free Tier is over the charges are still pretty small.  LumenAd has over 60 employees registered and the app gets tons of use, but the monthly bill for the service and database is about $2.
 
 After you're logged in you're ready to create a DynamoDB table.  Navigate to Services from the main page and search for `DynamoDB` then select it from the dropdown. I chose DynamoDB to make development of new features easier and because I wanted to learn the technology for another project.  If you're more familiar with a different database you can easily switch it out here. I recommend staying within the AWS environment for this step as Lambda functions connect very easily to AWS databases. 
