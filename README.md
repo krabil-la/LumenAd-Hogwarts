@@ -43,7 +43,7 @@ The one part of this whole process I haven't come with a good solution to is put
 You could have people fill out their own houses, but I had a hard time just getting everyone to come up with a house, let alone write it down.  There's also an option to put everyone in the database then create a command that lets them move themselves.  I didn't do this because I thought people would be switching all the time, but that may be a better solution for you.  Either way you'll need a default house for everyone who can't decide. I chose Hufflepuff as the default because of a quote from the books: <em>"Good Hufflepuff, she took the rest and taught them all she knew"</em>
 
 Here's the original javascript I used to upload the data to DynamoDB from a csv.  May it help you in your travels.
-`const fs = require('fs')
+```const fs = require('fs')
 const parse = require('csv-parse/lib/sync')
 const AWS = require('aws-sdk')
 
@@ -62,7 +62,7 @@ data.forEach((item) => {
         docClient.put({TableName: 'Hogwarts', Item: item}, (err, res) => {
                 if(err) console.log(err)
         })
-})`
+})```
 
 
 # The Code - Lambda
