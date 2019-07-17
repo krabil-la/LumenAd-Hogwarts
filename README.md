@@ -62,7 +62,8 @@ data.forEach((item) => {
         docClient.put({TableName: 'Hogwarts', Item: item}, (err, res) => {
                 if(err) console.log(err)
         })
-})```
+})
+```
 
 
 # The Code - Lambda
