@@ -9,13 +9,13 @@ print('Loading function')
 # instantiate DyanmoDB
 dynamo = boto3.resource('dynamodb')
 
-# parse slack secert key from environment variable.
+# parse Slack secert key from environment variable.
 # If you're making one of these yourself don't store the key inline.
 # Instead set an environment variable in Lambda and parse it like this
 SLACK_KEY = bytes(os.environ["SLACK_KEY"], 'utf-8')
 
 # A bit hacky, but a simple way to keep track of who has admin privileges.
-# put your own slack name here to become headmaster.
+# put your own Slack name here to become headmaster.
 ADMIN = ['your_name_here']
 
 # The houses -- used for printing out the points of each house.
@@ -65,7 +65,7 @@ def fullNameify(item):
     # It's one thing to give @soren points.
     # It's another thing to give them to Soren "Teach-me-how-to-Diggery", the Prefect of Hufflepuff
     if 'nickname' in item:
-        # include the nicname if they have one
+        # include the nickname if they have one
         first_name, last_name = fname.split(" ")
         fname = '{} "{}" {}'.format(first_name,item['nickname'],last_name)
     if 'title' in item:
@@ -74,7 +74,7 @@ def fullNameify(item):
     return fname
 
 # All important permissions function.
-# This looks up a user by their slack name in our DynamoDB table
+# This looks up a user by their Slack name in our DynamoDB table
 # then returns their permissions and full name for future use
 def checkUserPermissions(table,user):
     try:
@@ -144,7 +144,7 @@ def allocatePoints(table,user,points,assigner,msg):
         # AND the person giving the points
         assigner_found, assigner_permission, fancy_assigner = checkUserPermissions(table,assigner)
         assignee_found, assignee_permission, fancy_user = checkUserPermissions(table,user)
-        # format the response message that slack will display after successful point allocation
+        # format the response message that Slack will display after successful point allocation
         action = "awarded {} points to {}".format(points,fancy_user) if points > 0 else "detracted {} points from {}".format(abs(points),fancy_user)
         if assigner_permission and assignee_permission and assignee_found:
             # If all necessary permissions are met then we begin the point allocation process
@@ -185,7 +185,7 @@ def allocatePoints(table,user,points,assigner,msg):
 
             # Get the users new point total after allocation
             total_points = resp['Attributes']['points']
-            # create the response object for slack to display
+            # create the response object for Slack to display
             ret = {"text": "{} has {} for a total of {} points".format(fancy_assigner,action,total_points)}
         else:
             # This handles any of the permission errors.
@@ -214,7 +214,7 @@ def getHousePoints(table,house):
         items = response['Items']
         # Get the house total
         total_points = sum([i['points'] for i in items])
-        # format the members into a list to display in slack
+        # format the members into a list to display in Slack
         member_list = {}
         for i in items:
             # this used to be done with dictionary comprehension, but the
@@ -223,7 +223,7 @@ def getHousePoints(table,house):
             member_list[n] = i['points']
         # Sort the member list so those with the most points are at the top
         sorted_members = sorted(member_list.items(), key=lambda kv: kv[1], reverse=True)
-        # Respond with the list as an attachment so it'll display correctly in slack
+        # Respond with the list as an attachment so it'll display correctly in Slack
         members = "\n".join(["_{}_: {}".format(k,v) for k,v in sorted_members])
         ret = {"text": "{} has {} points".format(house,total_points)}
         ret["attachments"] = [{"text": members}]
@@ -254,7 +254,7 @@ def getUserPoints(table,user):
         ret = {"text": "No such witch/wizard: {}".format(user)}
     return ret
 
-# Clean the name, mostly just lowercase it and remove the @ from slack
+# Clean the name, mostly just lowercase it and remove the @ from Slack
 def cleanName(name):
     return name.replace("@","").replace(",","").strip().lower()
 
@@ -267,7 +267,7 @@ def isInt(s):
     except (ValueError,AssertionError) as e:
         return False
 
-# Parses the points, username and message from slack parameters.
+# Parses the points, username and message from Slack parameters.
 # I originally built the app with the expectation users would type something like:
 # /points @user 100
 # However, I started noticing people forgot the order and did things like:
@@ -346,7 +346,7 @@ def handlePoints(event, context):
             # We then split the text field on space character.
             text = params['text'][0].split(" ")
             try: # generic try-catch so if something breaks it doesn't cause an ugly (and scary) 502 message
-                # This block looks a bit confusing, but because slack passes the parameters of a slash command
+                # This block looks a bit confusing, but because Slack passes the parameters of a slash command
                 # as one big string we have to do a bunch of string checks and parsing in order to get the precious data.
                 if len(text) == 1:
                     # If there's only one parameter then the user is either trying to get a specific users total
@@ -381,7 +381,7 @@ def handlePoints(event, context):
                             # If they're not an admin and they're trying to alter their own point total we
                             # return a passive-agressive message telling them of their wrong-doing.
                             # If you're wondering about the _ and :thumbsdown: in the message those are special
-                            # decorators that slack will interpret and display as italic text and an emoji respectively.
+                            # decorators that Slack will interpret and display as italic text and an emoji respectively.
                             ret = getUserPoints(table,user)
                             ret["attachments"] = [{"text":"_It's considered bad form to give youself points. Your point total has not changed_ :thumbsdown:"}]
                             agg_ret = False

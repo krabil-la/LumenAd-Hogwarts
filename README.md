@@ -1,42 +1,42 @@
 # LumenAd-Hogwarts
 A custom app for distributing points via slash commands in Slack
 
-# Introduction 
+# Introduction
 This repo will show you how to set up your very own House Cup in Slack.  You too can give points for bravery, detract points for not liking someone and even have your own house cup ceremony!
-<Picture: 2018 Ceremony>
-  
+![AWS DynamoDB Settings](/images/house_cup_2018.png)
+
 # What you'll need
 * An AWS (Amazon Web Services) Account - I recommend using a separate AWS account if you already have production resources in AWS
 * A Slack account and enough priviledges to create custom Slash commands - ask your IT specialist for elevated priviledges
 * Some familiarity with Python - Harry Potter wasn't afraid to confront a giant snake and you shouldn't be either
 
 # The Database
-First You'll need to login to your AWS account or create an account: https://aws.amazon.com
-AWS (Amazon Web Services) is Amazon's cloud computing suite.  It's pretty easy to get started and they handle a lot of the crummiest parts of software development (ie, the hardware part).  Even if you have no familiarity with AWS you can complete this tutorial.  
+First you'll need to log in to your AWS account or create an account: https://aws.amazon.com
+AWS (Amazon Web Services) is Amazon's cloud computing suite.  It's pretty easy to get started and they handle a lot of the crummiest parts of software development.  Even if you have no familiarity with AWS you can complete this tutorial.  
 
 ![AWS Sign In](/images/aws_sign_in.png)
 
 If you don't have an account it should be noted that you have to provide a credit card to create an account.  Even though most of this will fall within the Free Tier usage you should be aware that you can accrue charges if something is misconfigured.  *LumenAd takes no responsibility for unexpected AWS bills.*  After the Free Tier is over the charges are still pretty small.  LumenAd has over 60 employees registered and the app gets tons of use, but the monthly bill for the service and database is about $2.
 
-After you're logged in you're ready to create a DynamoDB table.  Navigate to Services from the main page and search for `DynamoDB` then select it from the dropdown. I chose DynamoDB to make development of new features easier and because I wanted to learn the technology for another project.  If you're more familiar with a different database you can easily switch it out here. I recommend staying within the AWS environment for this step as Lambda functions connect very easily to AWS databases. 
+After you're logged in you're ready to create a DynamoDB table.  Navigate to Services from the main page and search for `DynamoDB` then select it from the dropdown. I chose DynamoDB to make development of new features easier and because I wanted to learn the technology for another project.  If you're more familiar with a different database you can easily switch it out here. I recommend staying within the AWS environment for this step as Lambda functions connect very easily to AWS databases.
 ![AWS Services](/images/aws_search_services.png)
-  
-From the DynamoDB service page click `Create Table`. 
+
+From the DynamoDB service page click `Create Table`.
 ![AWS DynamoDB table](/images/aws_create_dynamodb_table.png)
 
-The database configuraton options here are pretty varied, but I recommend using the slack username as your Primary Key accepting the default settings.  If you want to get fancy you can add a Sort Key and Secondary Indexes to improve query efficiency and speed.  However I only recommend doing this if you both know what you're doing and plan on having tons of users.  If you have <1000 users I wouldn't worry about it. 
+The database configuraton options here are pretty varied, but I recommend using the slack username as your Primary Key accepting the default settings.  If you want to get fancy you can add a Sort Key and Secondary Indexes to improve query efficiency and speed.  However I only recommend doing this if you both know what you're doing and plan on having tons of users.  If you have <1000 users I wouldn't worry about it.
 
 ![AWS DynamoDB Settings](/images/aws_dynamnodb_table_config.png)
 
-Once you have your table created you can begin adding items.  You can get very creative with the attributes of your users, but for this tutorial I recommend 5: 
-* `name` - String - the username provided by slack.  You can include the @ if you want, but I've chosen to parse that out. 
-* `fullname` - String - The full name of the user.  This one isn't completely necessary, but it helps make the responses readable. 
-* `house` - String - the house the user belongs to:  Gryffindor, Slytherin, Ravenclaw or Hufflepuff
-* `points` - Float/Decimal - the number of points the user has. Everyone will start with 0
-* `can_has` - Boolean -  a special flag so you can disable users without having to shut the whole app down. You can rename this to something more sensible, but we are building a Harry Potter app here so don't take it too seriously. 
-Optionals: 
-* `nickname` - Allows you to assign a nickname to users.  Turn `Calvin Broadus` into `Calvin "Snoop Dogg" Broadus`
-* `title` - Allows you to assign a title to a user.  Turn `Daenerys Targaryen` into `Daenerys Targaryen, the First of Her Name, The Unburnt, Queen of the Andals, the Rhoynar and the First Men, Queen of Meereen, Khaleesi of the Great Grass Sea, Protector of the Realm, Lady Regent of the Seven Kingdoms, Breaker of Chains and Mother of Dragons` 
+Once you have your table created you can begin adding items.  You can get very creative with the attributes of your users, but for this tutorial I recommend 5:
+* `name` - String - the username provided by slack.  You can include the @ if you want, but I've chosen to parse that out.
+* `fullname` - String - The full name of the user.  This one isn't completely necessary, but it helps make the responses readable.
+* `house` - String - the house the user belongs to:  Gryffindor, Slytherin, Ravenclaw or Hufflepuff.
+* `points` - Float/Decimal - the number of points the user has. Everyone will start with 0.
+* `can_has` - Boolean -  a special flag so you can disable users without having to shut the whole app down. You can rename this to something more sensible, but we are building a Harry Potter app here so don't take it too seriously.
+Optionals:
+* `nickname` - Allows you to assign a nickname to users.  Turn `Calvin Broadus` into `Calvin "Snoop Dogg" Broadus`.
+* `title` - Allows you to assign a title to a user.  Turn `Daenerys Targaryen` into `Daenerys Targaryen, the First of Her Name, The Unburnt, Queen of the Andals, the Rhoynar and the First Men, Queen of Meereen, Khaleesi of the Great Grass Sea, Protector of the Realm, Lady Regent of the Seven Kingdoms, Breaker of Chains and Mother of Dragons`.
 
 You may be wondering where to set these attributes in DynamoDB.  The answer is nowhere.  DynamoDB is a NoSQL database meaning it's unstructured.  For the uninitiated that means you can have highly varied data all in the same table.  In our example you could have a row with 3 attributes and a row with 30 attributes so long as they both have valid Primary Keys.  The easiest way to set this up is to store the data of your members with the attributes you want filled out then upload the data to DynamoDB.   
 # Populating the Database
@@ -89,15 +89,15 @@ API Gateway will create an endpoint for your function that you can call with a s
 ![AWS Lambda Trigger Config](/images/aws_lambda_trigger_config.png)
 
 # Slack Integration
-Head on over to https://api.slack.com/apps and select `Create New App`, give your app a name (I recommend either Hogwarts or Dumbledore full full effect) and select the workspace you want the app to be active in. After creating your app select `Slash Commands` then select `Create New Command`. 
+Head on over to https://api.slack.com/apps and select `Create New App`, give your app a name (I recommend either Hogwarts or Dumbledore full full effect) and select the workspace you want the app to be active in. After creating your app select `Slash Commands` then select `Create New Command`.
 ![Slack Create App](/images/slack_create_app.png)
 
 For the command I recommend either `/points` or `/hogwarts`.  In `Request URL` put the URL generated by the API Gateway trigger in the previous step.  You can put a short description and a usage hint (/points @user <number>) to remind users how the whole thing works.  
 ![Slack Slash Commands](/images/slack_slash_command.png)
-  
+
 After completing the slash command scroll towards the bottom until you find a section called `App Credentials`.  Copy the value from `Signing Secret`.  Return to AWS to paste that value into the environment variable section as `SLACK_KEY`.
 ![AWS Lambda Environment Variable](/images/aws_lambda_slack_key.png)
-  
+
 Finally navigate back up and select `Install your app to your Workspace`.
 
 # Testing
@@ -108,6 +108,3 @@ If everything worked you should now be able to open Slack and give some people s
 Congratulations!  You've now got a functioning AWS Lambda/Slack integration and the wizarding world at your fingertips.  Now get out there and represent your house!  
 
 - Kegan, LumenAd Headmaster, Data Scientist
-
- 
-
