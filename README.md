@@ -2,12 +2,17 @@
 A custom app for distributing points via slash commands in Slack
 
 # Introduction
-This repo will show you how to set up your very own House Cup in Slack.  You too can give points for bravery, detract points for not liking someone and even have your own house cup ceremony!
-![AWS DynamoDB Settings](/images/house_cup_2018.png)
+Do you want to be a wizard like Harry Potter and go to Hogwarts?  
+Well I probably can't help you with that, but I can help you bring a bit of magic to your company with this tutorial.
+If you follow these instructions you'll be able to have your very House Cup app in Slack!
+You can give points to your friends and colleagues who take time out of their day to help you out.
+You can take points when someone double-books the conference room.  
+You can even have award a winning house at your Holiday party (trophy not included).  This repo will teach you what you need to know.   
+![AWS Sign In](/images/house_cup_2018.png)
 
 # What you'll need
 * An AWS (Amazon Web Services) Account - I recommend using a separate AWS account if you already have production resources in AWS
-* A Slack account and enough priviledges to create custom Slash commands - ask your IT specialist for elevated priviledges
+* Slack and enough priviledges to create custom Slash commands - ask your IT specialist if you don't have this
 * Some familiarity with Python - Harry Potter wasn't afraid to confront a giant snake and you shouldn't be either
 
 # The Database
@@ -16,7 +21,7 @@ AWS (Amazon Web Services) is Amazon's cloud computing suite.  It's pretty easy t
 
 ![AWS Sign In](/images/aws_sign_in.png)
 
-If you don't have an account it should be noted that you have to provide a credit card to create an account.  Even though most of this will fall within the Free Tier usage you should be aware that you can accrue charges if something is misconfigured.  *LumenAd takes no responsibility for unexpected AWS bills.*  After the Free Tier is over the charges are still pretty small.  LumenAd has over 60 employees registered and the app gets tons of use, but the monthly bill for the service and database is about $2.
+If you don't have an account yet be aware that you have to provide a credit card during creation.  Even though most of this will fall within the Free Tier usage you should be aware that you can accrue charges if something is misconfigured.  **LumenAd takes no responsibility for unexpected AWS bills.**  After the Free Tier is over (new accounts have access to the Free Tier for 1 year) the charges are still pretty small.  LumenAd has over 60 employees registered and the app gets tons of use, but the monthly bill for the service and database is only about $3.
 
 After you're logged in you're ready to create a DynamoDB table.  Navigate to Services from the main page and search for `DynamoDB` then select it from the dropdown. I chose DynamoDB to make development of new features easier and because I wanted to learn the technology for another project.  If you're more familiar with a different database you can easily switch it out here. I recommend staying within the AWS environment for this step as Lambda functions connect very easily to AWS databases.
 ![AWS Services](/images/aws_search_services.png)
@@ -70,7 +75,8 @@ data.forEach((item) => {
 Alternatively you can enter each user manually through the UI.  Select `Create Item` on your table.
 ![AWS DynamoDB Settings](/images/aws_dynamodb_create_item.png)
 
-Then you can enter your users' information via the `Tree` editor or the `JSON` editor.
+Then you can enter your users' information via the `Tree` editor or the `JSON` editor.  This would be pretty laborious if you were gonna add 50 users, but if you've only got a few users this may be easier than attempting an automated upload.
+NOTE: You don't need to add `title` or `nickname` to users, the code provided works without it and you can add them later.
 ![AWS DynamoDB Settings](/images/aws_dynamodb_item.png)
 
 
